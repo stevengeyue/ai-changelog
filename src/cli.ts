@@ -3,9 +3,9 @@ import { Command, Option } from 'commander';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import pc from 'picocolors';
-import type { GeneratedChangelog, Language, Provider } from './types.js';
+import type { GeneratedChangelog, GitCommit, Language, Provider } from './types.js';
 import { resolveRange, repoName, hasUncommittedChanges } from './git.js';
-import { commitsToPrompt, isBreaking } from './commits.js';
+import { commitsToPrompt, detectLanguage, isBreaking } from './commits.js';
 import { bumpVersion, suggestBump, versionFromTag } from './semver.js';
 import { generateFallback } from './fallback.js';
 import { generateWithLlm, detectProvider, type LlmConfig } from './llm.js';
@@ -44,6 +44,10 @@ function prependToChangelog(path: string, section: string): void {
   writeFileSync(path, next, 'utf-8');
 }
 
+function resolveLanguage(lang: string | undefined, commits: GitCommit[]): Language {
+  return lang === 'zh' || lang === 'en' ? lang : detectLanguage(commits);
+}
+
 async function main() {
   const program = new Command();
   program
@@ -57,7 +61,7 @@ async function main() {
     .option('--model <name>', 'LLM model name')
     .option('--api-key <key>', 'API key (or use the <PROVIDER>_API_KEY env var)')
     .option('--base-url <url>', 'custom OpenAI-compatible base URL')
-    .addOption(new Option('--lang <lang>', 'output language').choices(['zh', 'en']).default('en'))
+    .addOption(new Option('--lang <lang>', 'output language (auto detects from commits)').choices(['auto', 'zh', 'en']).default('auto'))
     .addOption(new Option('--format <format>', 'output format').choices(['terminal', 'md', 'json']).default('terminal'))
     .option('--write', 'prepend the new section to CHANGELOG.md in the repo')
     .option('--no-llm', 'force the built-in rule engine, skip LLM calls')
@@ -95,7 +99,7 @@ async function main() {
       model: opts.model,
       apiKey: opts.apiKey,
       baseUrl: opts.baseUrl,
-      language: opts.lang as Language,
+      language: resolveLanguage(opts.lang, commits),
       repoName: repoName(repo),
       version: nextVersion,
       commitList: commitsToPrompt(commits),
@@ -113,10 +117,10 @@ async function main() {
       };
     } else {
       console.error(pc.dim(`LLM unavailable (${result.error || "unknown error"}) — falling back to the rule engine.`));
-      generated = generateFallback(commits, { language: opts.lang as Language, nextVersion, date: today() });
+      generated = generateFallback(commits, { language: resolveLanguage(opts.lang, commits), nextVersion, date: today() });
     }
   } else {
-    generated = generateFallback(commits, { language: opts.lang as Language, nextVersion, date: today() });
+    generated = generateFallback(commits, { language: resolveLanguage(opts.lang, commits), nextVersion, date: today() });
   }
 
   const format = opts.format ?? 'terminal';

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { bulletText, commitsToPrompt, groupCommits, groupOf, isBreaking, parseConventional } from '../src/commits.js';
+import { bulletText, commitsToPrompt, detectLanguage, groupCommits, groupOf, isBreaking, parseConventional } from '../src/commits.js';
 import type { GitCommit } from '../src/types.js';
 
 function commit(subject: string, extra: Partial<GitCommit> = {}): GitCommit {
@@ -72,5 +72,21 @@ describe('commitsToPrompt', () => {
     ]);
     expect(out).toContain('[BREAKING]');
     expect(out).toContain('fix: crash on empty file');
+  });
+});
+
+describe('detectLanguage', () => {
+  it('detects Chinese commits', () => {
+    const c = commit('修复登录时的崩溃问题');
+    expect(detectLanguage([c])).toBe('zh');
+  });
+  it('detects English commits', () => {
+    const c = commit('fix login crash');
+    expect(detectLanguage([c])).toBe('en');
+  });
+  it('returns en for mixed but mostly English', () => {
+    const en = commit('add dark mode');
+    const zh = commit('优化一下性能');
+    expect(detectLanguage([en, en, zh])).toBe('en');
   });
 });

@@ -39,7 +39,7 @@ $ npx ai-changelog --lang zh --write
 | 🤖 **任意 LLM** | OpenAI、DeepSeek、Anthropic、Ollama，或任何 OpenAI 兼容端点 |
 | 🧩 **无 Key 也能用** | 内置规则引擎自动兜底，工具永远不会"罢工" |
 | 📦 **智能版本号** | 自动识别破坏性变更，建议 major/minor/patch |
-| 🌍 **中英双语** | 输出简体中文或英文 |
+| 🌍 **中英双语 + 自动识别** | 输出简体中文或英文，根据提交语言自动选择 |
 | 🤖 **Agent 友好** | 输出干净 Markdown，可直接用于 Release Notes、PR、文档 |
 | 🔧 **CI 就绪** | 内置 GitHub Action，自动生成 Release Notes |
 
@@ -111,7 +111,7 @@ Options:
   --model <name>       LLM 模型名
   --api-key <key>      API Key（或用 <PROVIDER>_API_KEY 环境变量）
   --base-url <url>     自定义 OpenAI 兼容端点
-  --lang <lang>        en | zh（默认：en）
+  --lang <lang>        auto | en | zh（默认：auto —— 自动识别）
   --format <format>    terminal | md | json（默认：terminal）
   --set-version <v>    手动指定版本号（如 1.2.0）
   --write              把新版本段落写入 CHANGELOG.md
@@ -170,7 +170,6 @@ node dist/cli.js --no-llm   # 本地体验
 
 ## 🗺️ 路线图
 
-- [ ] 根据仓库主要提交语言自动选择 changelog 语言
 - [ ] GitHub App 机器人：在 PR 上自动评论生成的 release notes
 - [ ] 模板定制（自定义分组名、emoji 开关）
 - [ ] Diff 感知摘要：大变更时附带 `--stat` 上下文

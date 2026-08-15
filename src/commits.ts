@@ -1,4 +1,4 @@
-import type { ConventionalCommit, GitCommit } from './types.js';
+import type { ConventionalCommit, GitCommit, Language } from './types.js';
 
 export interface GroupedCommit {
   group: string;
@@ -95,4 +95,24 @@ export function parseConventional(subject: string): ConventionalCommit | undefin
     breaking: !!groups.bang,
     description: groups.desc!.trim(),
   };
+}
+
+/** Count CJK characters in a string. */
+function countCjk(s: string): number {
+  const m = s.match(/[\u4e00-\u9fff\u3000-\u303f\uff00-\uffef]/g);
+  return m ? m.length : 0;
+}
+
+/**
+ * Heuristically detect the dominant language of a set of commits.
+ * A commit counts as Chinese when a meaningful share of its text is CJK.
+ * Returns 'zh' when the majority of commits are Chinese.
+ */
+export function detectLanguage(commits: GitCommit[], threshold = 0.5): Language {
+  let zhCommits = 0;
+  for (const c of commits) {
+    const len = c.message.length;
+    if (len > 0 && countCjk(c.message) / len > 0.3) zhCommits++;
+  }
+  return commits.length > 0 && zhCommits / commits.length > threshold ? 'zh' : 'en';
 }

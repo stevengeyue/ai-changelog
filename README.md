@@ -39,7 +39,7 @@ $ npx ai-changelog --lang zh --write
 | 🤖 **Your favorite LLM** | OpenAI, DeepSeek, Anthropic, Ollama, or any OpenAI-compatible endpoint |
 | 🧩 **Works without a key** | Built-in rule engine kicks in automatically — the tool never bricks |
 | 📦 **Smart versioning** | Detects breaking changes and suggests major/minor/patch |
-| 🌍 **Bilingual** | English and Simplified Chinese output |
+| 🌍 **Bilingual + auto-detect** | English / Simplified Chinese output, auto-detected from your commits |
 | 🤖 **Agent-friendly** | Outputs clean markdown ready for release notes, PRs, or your docs |
 | 🔧 **CI-ready** | GitHub Action included — post changelogs to Releases automatically |
 
@@ -111,7 +111,7 @@ Options:
   --model <name>       LLM model name
   --api-key <key>      API key (or use <PROVIDER>_API_KEY env var)
   --base-url <url>     custom OpenAI-compatible base URL
-  --lang <lang>        en | zh (default: en)
+  --lang <lang>        auto | en | zh (default: auto — detects from commits)
   --format <format>    terminal | md | json (default: terminal)
   --set-version <v>    explicit version for the title (e.g. 1.2.0)
   --write              prepend the new section to CHANGELOG.md
@@ -170,7 +170,6 @@ node dist/cli.js --no-llm   # try it locally
 
 ## 🗺️ Roadmap
 
-- [ ] Detect changelog language from the repository's dominant commit language
 - [ ] GitHub App bot that comments on PRs with generated release notes
 - [ ] Template customization (custom group names, emoji toggles)
 - [ ] Diff-aware summaries: include `--stat` context for large changes

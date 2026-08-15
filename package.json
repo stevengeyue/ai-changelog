@@ -1,0 +1,52 @@
+{
+  "name": "ai-changelog",
+  "version": "1.0.0",
+  "description": "AI-powered changelog & release notes generator from git history. Works with OpenAI, DeepSeek, Anthropic, Ollama — and even without an API key.",
+  "type": "module",
+  "bin": {
+    "ai-changelog": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "action.yml",
+    "docs",
+    "README.md",
+    "README.zh-CN.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "check": "tsc --noEmit",
+    "test": "vitest run",
+    "start": "node dist/cli.js",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "changelog",
+    "release-notes",
+    "ai",
+    "llm",
+    "openai",
+    "deepseek",
+    "ollama",
+    "conventional-commits",
+    "semver",
+    "cli",
+    "github-action",
+    "developer-tools"
+  ],
+  "author": "geyuejun <steven_ge_yue@126.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "commander": "^14.0.2",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.15"
+  }
+}

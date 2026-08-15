@@ -3,7 +3,7 @@
 ### Stop writing release notes. Let the AI do it.
 
 ```
-$ npx ai-changelog --lang zh --write
+$ npx github:stevengeyue/ai-changelog --lang zh --write
 ✦ Analyzing git history (v1.0.0..HEAD, 12 commits)...
 ✦ Provider: deepseek · Suggested version: 1.1.0 (minor)
 
@@ -28,19 +28,19 @@ $ npx ai-changelog --lang zh --write
 
 [![CI](https://github.com/stevengeyue/ai-changelog/actions/workflows/ci.yml/badge.svg)](https://github.com/stevengeyue/ai-changelog/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![npm](https://img.shields.io/npm/v/ai-changelog)](https://www.npmjs.com/package/ai-changelog)
 [![Node](https://img.shields.io/badge/Node-18+-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org)
 
 ## ✨ Highlights
 
 | | |
 | --- | --- |
-| ⚡ **Zero setup** | `npx ai-changelog` — no install, no config file |
+| ⚡ **Zero setup** | `npx github:stevengeyue/ai-changelog` — no install, no config file |
 | 🤖 **Your favorite LLM** | OpenAI, DeepSeek, Anthropic, Ollama, or any OpenAI-compatible endpoint |
 | 🧩 **Works without a key** | Built-in rule engine kicks in automatically — the tool never bricks |
 | 📦 **Smart versioning** | Detects breaking changes and suggests major/minor/patch |
 | 🌍 **Bilingual + auto-detect** | English / Simplified Chinese output, auto-detected from your commits |
 | 🤖 **Agent-friendly** | Outputs clean markdown ready for release notes, PRs, or your docs |
+| 📦 **npm-ready** | Works everywhere via `npx github:stevengeyue/ai-changelog` |
 | 🔧 **CI-ready** | GitHub Action included — post changelogs to Releases automatically |
 
 ## 🚀 Quick start
@@ -48,7 +48,7 @@ $ npx ai-changelog --lang zh --write
 Run it in any git repository:
 
 ```bash
-npx ai-changelog
+npx github:stevengeyue/ai-changelog
 ```
 
 That's it. It finds the last tag (or walks to the first commit), reads the commits, and prints a changelog.
@@ -56,7 +56,7 @@ That's it. It finds the last tag (or walks to the first commit), reads the commi
 Want Chinese output and to update your `CHANGELOG.md` in one shot?
 
 ```bash
-npx ai-changelog --lang zh --write
+npx github:stevengeyue/ai-changelog --lang zh --write
 ```
 
 ## 🧠 LLM providers
@@ -75,13 +75,13 @@ Example with DeepSeek:
 
 ```bash
 export DEEPSEEK_API_KEY=sk-...
-npx ai-changelog --provider deepseek --lang zh
+npx github:stevengeyue/ai-changelog --provider deepseek --lang zh
 ```
 
 Example with a local Ollama model (no cloud, no cost):
 
 ```bash
-npx ai-changelog --provider ollama --model qwen2.5:7b --base-url http://localhost:11434/v1
+npx github:stevengeyue/ai-changelog --provider ollama --model qwen2.5:7b --base-url http://localhost:11434/v1
 ```
 
 > 🔑 **No API key?** Just run it. If no key is found (or the LLM call fails), ai-changelog falls back to a deterministic rule engine that still produces a clean, grouped changelog. You only lose the LLM's summarization flair.

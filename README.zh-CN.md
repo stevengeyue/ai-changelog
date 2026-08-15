@@ -3,7 +3,7 @@
 ### 别再手写 release notes 了，交给 AI。
 
 ```
-$ npx ai-changelog --lang zh --write
+$ npx github:stevengeyue/ai-changelog --lang zh --write
 ✦ 正在分析 git 历史（v1.0.0..HEAD，12 commits）...
 ✦ Provider: deepseek · 建议版本: 1.1.0 (minor)
 
@@ -28,14 +28,13 @@ $ npx ai-changelog --lang zh --write
 
 [![CI](https://github.com/stevengeyue/ai-changelog/actions/workflows/ci.yml/badge.svg)](https://github.com/stevengeyue/ai-changelog/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![npm](https://img.shields.io/npm/v/ai-changelog)](https://www.npmjs.com/package/ai-changelog)
 [![Node](https://img.shields.io/badge/Node-18+-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org)
 
 ## ✨ 特性
 
 | | |
 | --- | --- |
-| ⚡ **零配置** | `npx ai-changelog` —— 无需安装、无需配置文件 |
+| ⚡ **零配置** | `npx github:stevengeyue/ai-changelog` —— 无需安装、无需配置文件 |
 | 🤖 **任意 LLM** | OpenAI、DeepSeek、Anthropic、Ollama，或任何 OpenAI 兼容端点 |
 | 🧩 **无 Key 也能用** | 内置规则引擎自动兜底，工具永远不会"罢工" |
 | 📦 **智能版本号** | 自动识别破坏性变更，建议 major/minor/patch |
@@ -48,7 +47,7 @@ $ npx ai-changelog --lang zh --write
 在任何 git 仓库里运行：
 
 ```bash
-npx ai-changelog
+npx github:stevengeyue/ai-changelog
 ```
 
 它会自动找到上一个 tag（没有则回溯到第一个提交）、读取提交记录、输出 changelog。
@@ -56,7 +55,7 @@ npx ai-changelog
 一步到位：中文输出 + 写入 `CHANGELOG.md`：
 
 ```bash
-npx ai-changelog --lang zh --write
+npx github:stevengeyue/ai-changelog --lang zh --write
 ```
 
 ## 🧠 LLM Provider
@@ -75,13 +74,13 @@ DeepSeek 示例：
 
 ```bash
 export DEEPSEEK_API_KEY=sk-...
-npx ai-changelog --provider deepseek --lang zh
+npx github:stevengeyue/ai-changelog --provider deepseek --lang zh
 ```
 
 本地 Ollama 示例（免费、隐私）：
 
 ```bash
-npx ai-changelog --provider ollama --model qwen2.5:7b --base-url http://localhost:11434/v1
+npx github:stevengeyue/ai-changelog --provider ollama --model qwen2.5:7b --base-url http://localhost:11434/v1
 ```
 
 > 🔑 **没有 API Key？** 直接运行即可。找不到 Key（或 LLM 调用失败）时，ai-changelog 自动降级到确定性规则引擎，依然能生成清晰分组的中文/英文 changelog，只是少了 LLM 的"润色"。

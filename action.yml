@@ -48,7 +48,7 @@ runs:
         args=()
         if [ -n "${{ inputs.from }}" ]; then args+=(--from "${{ inputs.from }}"); fi
         if [ -n "${{ inputs.set-version }}" ]; then args+=(--set-version "${{ inputs.set-version }}"); fi
-        npx --yes ai-changelog --repo . --provider "${{ inputs.provider }}" --lang "${{ inputs.lang }}" --format md "${args[@]}" | tee "${{ inputs.output }}"
+        npx --yes github:stevengeyue/ai-changelog --repo . --provider "${{ inputs.provider }}" --lang "${{ inputs.lang }}" --format md "${args[@]}" | tee "${{ inputs.output }}"
         changelog="$(cat "${{ inputs.output }}")"
         changelog="${changelog//'%'/'%25'}"
         changelog="${changelog//$'\n'/'%0A'}"

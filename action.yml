@@ -1,0 +1,56 @@
+name: 'AI Changelog'
+description: 'Generate AI-powered changelog / release notes from git history (OpenAI, DeepSeek, Anthropic, Ollama, or no LLM at all).'
+author: 'geyuejun'
+
+inputs:
+  from:
+    description: 'Base git ref to compare against (default: latest tag)'
+    required: false
+  provider:
+    description: 'LLM provider: openai, deepseek, anthropic, ollama, auto'
+    required: false
+    default: 'auto'
+  lang:
+    description: 'Output language: en or zh'
+    required: false
+    default: 'en'
+  set-version:
+    description: 'Explicit version for the changelog title (e.g. 1.2.0)'
+    required: false
+  output:
+    description: 'File the generated markdown is written to'
+    required: false
+    default: 'CHANGELOG.generated.md'
+
+outputs:
+  changelog:
+    description: 'Generated markdown changelog'
+    value: ${{ steps.gen.outputs.changelog }}
+
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+    - name: Generate changelog
+      id: gen
+      shell: bash
+      env:
+        OPENAI_API_KEY: ${{ inputs.openai-api-key }}
+        DEEPSEEK_API_KEY: ${{ inputs.deepseek-api-key }}
+        ANTHROPIC_API_KEY: ${{ inputs.anthropic-api-key }}
+      run: |
+        set -euo pipefail
+        args=()
+        if [ -n "${{ inputs.from }}" ]; then args+=(--from "${{ inputs.from }}"); fi
+        if [ -n "${{ inputs.set-version }}" ]; then args+=(--set-version "${{ inputs.set-version }}"); fi
+        npx --yes ai-changelog --repo . --provider "${{ inputs.provider }}" --lang "${{ inputs.lang }}" --format md "${args[@]}" | tee "${{ inputs.output }}"
+        changelog="$(cat "${{ inputs.output }}")"
+        changelog="${changelog//'%'/'%25'}"
+        changelog="${changelog//$'\n'/'%0A'}"
+        changelog="${changelog//$'\r'/'%0D'}"
+        echo "changelog=$changelog" >> "$GITHUB_OUTPUT"

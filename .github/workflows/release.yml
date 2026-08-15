@@ -1,0 +1,35 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Generate release notes with ai-changelog
+        id: notes
+        run: |
+          set -euo pipefail
+          prev=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || true)
+          args=()
+          if [ -n "$prev" ]; then args+=(--from "$prev"); fi
+          npx --yes github:stevengeyue/ai-changelog \
+            --repo . --to "${{ github.ref_name }}" \
+            --set-version "${GITHUB_REF_NAME#v}" \
+            --format md "${args[@]}" > notes.md
+          echo "Generated release notes from ${prev:-first-commit} to ${{ github.ref_name }}"
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: notes.md

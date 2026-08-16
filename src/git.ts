@@ -24,6 +24,16 @@ export function latestTag(repo: string): string | undefined {
   }
 }
 
+/** Nearest tag on the parent of ref (the tag before a given ref). */
+export function tagBefore(repo: string, ref: string): string | undefined {
+  try {
+    const tag = gitOut(repo, ['describe', '--tags', '--abbrev=0', ref + '~1']);
+    return tag || undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 /** All tags sorted by commit date descending. */
 export function listTags(repo: string): string[] {
   try {
@@ -92,9 +102,18 @@ export function collectCommits(
   return { commits, range };
 }
 
-/** Resolve the git range for the CLI: latest tag..HEAD by default. */
+/**
+ * Resolve the git range for the CLI.
+ * - Explicit --from wins.
+ * - With an explicit --to (e.g. a release tag), fall back to the nearest
+ *   tag before that ref, so the range is `prevTag..to` and never empty.
+ * - Otherwise use the latest tag reachable from HEAD.
+ */
 export function resolveRange(repo: string, from?: string, to = 'HEAD'): RangeResult {
-  const tag = from ?? latestTag(repo);
+  let tag = from;
+  if (!tag) {
+    tag = to === 'HEAD' ? latestTag(repo) : tagBefore(repo, to);
+  }
   const { commits, range } = collectCommits(repo, tag, to);
   return { commits, fromTag: tag, range };
 }

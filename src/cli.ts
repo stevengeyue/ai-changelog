@@ -89,7 +89,10 @@ async function main() {
   // Resolve the version to title the section.
   const bump = suggestBump(commits);
   const fromTagVersion = fromTag ? versionFromTag(fromTag) : undefined;
-  const nextVersion = opts.setVersion ?? bumpVersion(fromTagVersion, bump);
+  // When --to is a version tag (e.g. v1.2.0), use its version for the title,
+  // falling back to the explicit --set-version, then to the bump suggestion.
+  const toVersion = opts.to && opts.to !== 'HEAD' ? versionFromTag(opts.to) : undefined;
+  const nextVersion = opts.setVersion ?? toVersion ?? bumpVersion(fromTagVersion, bump);
   const breakingCount = commits.filter(isBreaking).length;
 
   let generated: GeneratedChangelog;

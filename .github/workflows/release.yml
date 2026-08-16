@@ -29,8 +29,17 @@ jobs:
             --set-version "${GITHUB_REF_NAME#v}" \
             --format md "${args[@]}" > notes.md
           echo "Generated release notes from ${prev:-first-commit} to ${{ github.ref_name }}"
+      - name: Verify release notes
+        shell: bash
+        run: |
+          grep -q "## \[${GITHUB_REF_NAME#v}\]" notes.md && echo "OK: notes version matches tag" || { echo "FAIL: notes version does not match tag"; cat notes.md; exit 1; }
       - name: Publish release
-        uses: softprops/action-gh-release@v2
-        with:
-          body_path: notes.md
-          update_release_body: true
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "${{ github.ref_name }}" >/dev/null 2>&1; then
+            gh release edit "${{ github.ref_name }}" --notes-file notes.md
+          else
+            gh release create "${{ github.ref_name }}" --notes-file notes.md
+          fi
